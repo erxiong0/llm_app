@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen bg-gray-100">
+    <!-- 左侧历史记录列 -->
+    <div id="left-column" class="hidden w-1/5 bg-white border-r border-gray-300 overflow-y-auto p-4">
+        <!-- 历史记录动态添加 -->
+    </div>
+    <!-- 右侧主内容区 -->
+    <div class="flex-1 flex flex-col p-4">
+        <!-- 聊天窗口 -->
+        <div id="chat-window"
+            class="flex-1 bg-white rounded-lg shadow-md overflow-y-auto p-4 space-y-4">
+            <!-- 聊天消息动态添加 -->
+        </div>
+        <!-- 输入区域 -->
+        <div class="mt-4 flex items-center space-x-4">
+            <input type="text" id="input-box"
+                class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="询问任何问题">
+            <button id="send-button"
+                class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <i class="fa-solid fa-paper-plane"></i> 发送
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const inputBox = document.getElementById('input-box');
+        const sendButton = document.getElementById('send-button');
+        const leftColumn = document.getElementById('left-column');
+        // 从 localStorage 中获取历史记录，如果没有则初始化为空数组
+        let historyList = JSON.parse(localStorage.getItem('historyList')) || [];
+        let chatMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+
+        // 页面加载时渲染聊天记录和历史记录
+        window.addEventListener('load', () => {
+            renderChatMessages();
+            updateHistoryList();
+        });
+
+        // 生成唯一 ID
+        function generateUniqueId() {
+            return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        }
+
+        // 发送消息函数
+        async function sendMessage() {
+            const userInput = inputBox.value.trim();
+            if (!userInput) return;
+
+            const messageId = generateUniqueId();
+            // 添加用户消息
+            const userMsg = document.createElement('div');
+            userMsg.id = messageId;
+            userMsg.classList.add('flex', 'flex-row-reverse','mb-4', 'user-message');
+            userMsg.innerHTML = `
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-lg max-w-xl">
+                    ${userInput}
+                </div>
+            `;
+            chatWindow.appendChild(userMsg);
+            chatMessages.push({ id: messageId, type: 'user', content: userInput });
+
+            inputBox.value = ''; // 清空输入框
+            chatWindow.scrollTop = chatWindow.scrollHeight; // 滚动到最新消息
+
+            // 添加历史记录
+            historyList.push({ id: messageId, content: userInput });
+            updateHistoryList();
+
+            try {
+                // 调用后端接口获取大模型回复
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userInput })
+                });
+                const data = await response.json();
+
+                const botMessageId = generateUniqueId();
+                // 添加机器人回复（修改背景色为 bg-gray-100）
+                const botMsg = document.createElement('div');
+                botMsg.id = botMessageId;
+                botMsg.classList.add('flex','mb-4', 'bot-message');
+                botMsg.innerHTML = `
+                    <div class="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-xl">
+                        ${data.bot}
+                    </div>
+                `;
+                chatWindow.appendChild(botMsg);
+                chatMessages.push({ id: botMessageId, type: 'bot', content: data.bot });
+
+                chatWindow.scrollTop = chatWindow.scrollHeight; // 滚动到最新消息
+            } catch (error) {
+                console.error('发送消息失败', error);
+            }
+
+            // 确保无论请求成功还是失败都保存聊天记录和历史记录到 localStorage
+            localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+            localStorage.setItem('historyList', JSON.stringify(historyList));
+        }
+
+        // 渲染聊天记录
+        function renderChatMessages() {
+            chatWindow.innerHTML = ''; // 清空聊天窗口，避免重复渲染
+            chatMessages.forEach((message) => {
+                const msgDiv = document.createElement('div');
+                msgDiv.id = message.id;
+                if (message.type === 'user') {
+                    msgDiv.classList.add('flex', 'flex-row-reverse','mb-4', 'user-message');
+                    msgDiv.innerHTML = `
+                        <div class="bg-blue-100 text-blue-800 p-3 rounded-lg max-w-xl">
+                            ${message.content}
+                        </div>
+                    `;
+                } else {
+                    msgDiv.classList.add('flex','mb-4', 'bot-message');
+                    msgDiv.innerHTML = `
+                        <div class="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-xl">
+                            ${message.content}
+                        </div>
+                    `;
+                }
+                chatWindow.appendChild(msgDiv);
+            });
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // 更新历史记录列表
+        function updateHistoryList() {
+            leftColumn.innerHTML = '';
+            if (historyList.length > 0) {
+                leftColumn.classList.remove('hidden');
+                historyList.forEach((history) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.classList.add('cursor-pointer', 'p-2', 'rounded-md', 'hover:bg-gray-200');
+                    historyItem.textContent = history.content;
+                    historyItem.addEventListener('click', () => {
+                        const message = document.getElementById(history.id);
+                        if (message) {
+                            message.scrollIntoView({ behavior:'smooth', block: 'center' });
+                        }
+                    });
+                    leftColumn.appendChild(historyItem);
+                });
+            } else {
+                leftColumn.classList.add('hidden');
+            }
+        }
+
+        // 点击发送按钮发送消息
+        sendButton.addEventListener('click', sendMessage);
+
+        // 按下回车键发送消息
+        inputBox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // 初始化历史记录显示
+        updateHistoryList();
+    </script>
+</body>
+
+</html>    

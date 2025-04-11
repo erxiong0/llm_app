@@ -1,0 +1,2 @@
+
+kimi_api_key = "sk-SwBEVghU2HFgRrpkMBMLfgmxMdJnzOXBVZUzMcqti68ErTpB"
