@@ -1,9 +1,23 @@
-# llm_app
-make LLM as a private assistant  
+# LLM Service
+I try to make LLM as a private assistant and now it is just a copy version with preference like [GPT](https://chatgpt.com/c/67d8be48-0b60-8006-9432-453727585cef), [Deepseek](https://chat.deepseek.com/) and so on.  
+
+I have realize some functions:  
+
+  - *Historical Record* There's a historical 
+
+## What's 
 
 ## A Simple Example  
+Config your llm api in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools`. If you use `moonshot-v1-8k`, you can input your api key in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools/config/config.py` directly.  
+
+```bash
+export FLASK_API=app.py
+flask run
 ```
-config
+
+```bash
+$ flask run
+  * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
 ```
 
 ## Dependencies
