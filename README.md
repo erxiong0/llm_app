@@ -3,9 +3,7 @@ I try to make LLM as a private assistant and now it is just a copy version with 
 
 I have realize some functions:  
 
-  - *Historical Record* There's a historical 
-
-## What's 
+  - *Historical Record* The left panel stores the user's historical questions. When a user clicks on a question, the right panel automatically jumps to the corresponding answer. Additionally, refreshing the webpage will not clear the historical records.
 
 ## A Simple Example  
 Config your llm api in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools`. If you use `moonshot-v1-8k`, you can input your api key in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools/config/config.py` directly.  
