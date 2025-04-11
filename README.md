@@ -1,7 +1,7 @@
 # LLM Service
-I try to make LLM as a private assistant and now it is just a copy version with preference like [GPT](https://chatgpt.com/c/67d8be48-0b60-8006-9432-453727585cef), [Deepseek](https://chat.deepseek.com/) and so on.  
+I try to make LLM as a private assistant and now it is just a copy version with preference like [GPT](https://chatgpt.com), [Deepseek](https://chat.deepseek.com/) and so on.  
 
-I have realize some functions:  
+I have realized some functions:  
 
   - *Historical Record* The left panel stores the user's historical questions. When a user clicks on a question, the right panel automatically jumps to the corresponding answer. Additionally, refreshing the webpage will not clear the historical records.
 
