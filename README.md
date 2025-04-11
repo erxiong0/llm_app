@@ -1,7 +1,7 @@
 # LLM Service
 I try to make LLM as a private assistant and now it is just a copy version with preference like [GPT](https://chatgpt.com), [Deepseek](https://chat.deepseek.com/) and so on.  
 
-[Preference](https://github.com/erxiong0/llm_app/blob/main/png/preference.jpg)  
+![Preference](https://github.com/erxiong0/llm_app/blob/main/png/preference.jpg)  
 
   
 
