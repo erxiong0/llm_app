@@ -11,7 +11,7 @@ I have realized some functions:
 
 
 ## A Simple Example  
-Config your llm api in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools`. If you use `moonshot-v1-8k`, you can input your api key in `/Users/erxiong/Downloads/chichi_lab/flask_demo/llm_tools/config/config.py` directly.  
+Config your llm api in `flask_demo/llm_tools`. If you use `moonshot-v1-8k`, you can input your api key in `flask_demo/llm_tools/config/config.py` directly.  
 
 ```bash
 export FLASK_API=app.py
